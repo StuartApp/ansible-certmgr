@@ -1,0 +1,43 @@
+---
+
+- name: "Check if certmgr is installed"
+  stat:
+    path: "/usr/local/bin/certmgr"
+  register: certmgr_installed
+  check_mode: no
+
+- name: "Get current certmgr version"
+  shell: /usr/local/bin/certmgr version | grep  "^certmgr" | awk '{print $NF}'
+  register: certmgr_current_version
+  check_mode: no
+  when: certmgr_installed.stat.exists
+
+- name: "Download certmgr"
+  unarchive:
+    src: "{{ certmgr_url }}"
+    dest: /tmp
+    remote_src: yes
+  register: download_certmgr
+  when: (not certmgr_installed.stat.exists) or (certmgr_version is version_compare(certmgr_current_version.stdout, '>'))
+
+- name: Install new version
+  command: mv "/tmp/certmgr-{{ certmgr_os }}-{{ certmgr_arch }}-v{{ certmgr_version }}" /usr/local/bin/certmgr
+  when: not (download_certmgr | skipped)
+
+- name: Install systemd unit
+  template:
+    src: certmgr.service.j2
+    dest: /etc/systemd/system/certmgr.service
+    owner: root
+    group: root
+    mode: 0640
+  notify: start certmgr
+
+- name: Reread Systemd configs
+  systemd: daemon_reload=yes
+
+- name: Enable systemd unit
+  systemd:
+    name: certmgr
+    enabled: "{{ certmgr_service_enabled }}"
+    masked: no

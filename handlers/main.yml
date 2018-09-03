@@ -1,0 +1,15 @@
+---
+
+- name: restart certmgr
+  systemd:
+    state: restarted
+    daemon_reload: yes
+    name: certmgr
+  when: certmgr_service_enabled
+
+- name: start certmgr
+  systemd:
+    state: started
+    daemon_reload: yes
+    name: certmgr
+  when: certmgr_service_enabled

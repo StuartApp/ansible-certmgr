@@ -1,0 +1,51 @@
+---
+
+certmgr_version: 1.4.3
+certmgr_os: linux
+certmgr_arch: amd64
+certmgr_url: "https://github.com/cloudflare/certmgr/releases/download/v{{ certmgr_version }}/certmgr-{{ certmgr_os }}-{{ certmgr_arch }}-v{{ certmgr_version }}.tar.gz"
+
+certmgr_configdir: /etc/certmgr
+certmgr_cert_configdir: /etc/certmgr.d
+certmgr_svcmgr: systemd
+certmgr_before: 72h
+certmgr_interval: 1h
+certmgr_metrics_address: localhost
+certmgr_metrics_port: "8080"
+
+certmgr_user: root
+certmgr_group: root
+
+certmgr_service_enabled: false
+
+certmgr_cert_defs: []
+
+#############################
+# certmgr_cert_defs example #
+#############################
+
+# certmgr_cert_defs:
+#   - name: test
+#     service: nginx  # Optional
+#     action: restart # Optional
+#     cn: backend
+#     hosts: [ 'localhost', '127.0.0.1', 'consul', 'consul.backend' ]
+#     country: SP
+#     state: Barcelona
+#     city: Barcelona
+#     organization: Systems
+#     private_key_path: /tmp/backend-key.pem
+#     private_key_mode: "0600"
+#     private_key_owner: root
+#     private_key_group: root
+#     certificate_path: /tmp/backend.pem
+#     certificate_mode: "0600"
+#     certificate_owner: root
+#     certificate_group: root
+#     authority_remote: localhost:8888
+#     authority_auth_key: "super_secret"
+#     authority_profile: server
+#     authority_path: /tmp/ca.pem
+#     authority_mode: "0644"
+#     authority_owner: root
+#     authority_group: root

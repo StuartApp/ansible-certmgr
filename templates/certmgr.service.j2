@@ -1,0 +1,12 @@
+[Unit]
+Description=certmgr
+StartLimitIntervalSec=0
+
+[Service]
+Type=simple
+Restart=always
+RestartSec=10s
+ExecStart=/usr/local/bin/certmgr
+
+[Install]
+WantedBy=multi-user.target

@@ -1,0 +1,49 @@
+---
+
+- name: Create configuration dirs
+  file:
+    path: "{{ item }}"
+    state: directory
+    mode: 0755
+    owner: "{{ certmgr_user }}"
+    group: "{{ certmgr_group }}"
+  with_items:
+    - "{{ certmgr_configdir }}"
+    - "{{ certmgr_cert_configdir }}"
+
+- name: Setup configuration
+  template:
+    src: certmgr.yaml.j2
+    dest: "{{ certmgr_configdir }}/certmgr.yaml"
+    owner: "{{ certmgr_user }}"
+    group: "{{ certmgr_group }}"
+    mode: 0644
+  notify: restart certmgr
+
+- name: Add certificate definitions
+  template:
+    src: cert.json.j2
+    dest: "{{ certmgr_cert_configdir}}/{{ item.name }}.json"
+    owner: "{{ certmgr_user }}"
+    group: "{{ certmgr_group }}"
+    mode: 0600
+  with_items: "{{ certmgr_cert_defs }}"
+  notify: restart certmgr
+
+- name: Download CA certificate from every remote configured
+  shell: curl -X POST -d '{"label":"","profile":"{{ item.authority_profile }}"}' -sk \
+         {{ item.authority_remote }}/api/v1/cfssl/info | cfssljson {{ item.name }}
+  args:
+    chdir: /etc/ssl/certs/
+  become: true
+  become_user: "{{ certmgr_user }}"
+  with_items: "{{ certmgr_cert_defs }}"
+  notify: restart certmgr
+  when: item.authority_remote | search('https://')
+
+- name: CertMgr first run
+  command: certmgr ensure
+  become: true
+  become_user: "{{ certmgr_user }}"
+  failed_when: false
+

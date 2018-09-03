@@ -1,0 +1,45 @@
+{
+{% if item.service is defined %}
+    "service": "{{ item.service }}",
+    "action": "{{ item.action }}",
+{% endif -%}
+    "request": {
+        "CN": "{{ item.cn }}",
+        "hosts": {{ item.hosts | to_nice_json | indent(8) }},
+        "key": {
+            "algo": "{{ item.algo | default('ecdsa') }}",
+            "size": {{ item.size | default('521') }}
+        },
+        "names": [
+            {
+                "C": "{{ item.country }}",
+                "ST": "{{ item.state }}",
+                "L": "{{ item.city }}",
+                "O": "{{ item.organization }}"
+            }
+        ]
+    },
+    "private_key": {
+        "path": "{{ item.private_key_path }}",
+        "mode": "{{ item.private_key_mode }}",
+        "owner": "{{ item.private_key_owner }}",
+        "group": "{{ item.private_key_group }}"
+    },
+    "certificate": {
+        "path": "{{ item.certificate_path }}",
+        "mode": "{{ item.certificate_mode }}",
+        "owner": "{{ item.certificate_owner }}",
+        "group": "{{ item.certificate_group }}"
+    },
+    "authority": {
+        "remote": "{{ item.authority_remote }}",
+        "auth_key": "{{ item.authority_auth_key }}",
+        "profile": "{{ item.authority_profile }}",
+        "file": {
+          "path": "{{ item.authority_path }}",
+          "mode": "{{ item.authority_mode }}",
+          "owner": "{{ item.authority_owner }}",
+          "group": "{{ item.authority_group }}"
+        }
+    }
+}
