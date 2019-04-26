@@ -1,15 +1,13 @@
 ---
 
 - name: restart certmgr
-  systemd:
+  service:
     state: restarted
-    daemon_reload: yes
     name: certmgr
-  when: certmgr_service_enabled
+  when: certmgr_service_state == "started"
 
 - name: start certmgr
-  systemd:
+  service:
     state: started
-    daemon_reload: yes
     name: certmgr
-  when: certmgr_service_enabled
+  when: certmgr_service_state == "started"

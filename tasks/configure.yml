@@ -40,10 +40,10 @@
   with_items: "{{ certmgr_cert_defs }}"
   notify: restart certmgr
   when: item.authority_remote | search('https://')
+  failed_when: False
 
 - name: CertMgr first run
   command: certmgr ensure
   become: true
   become_user: "{{ certmgr_user }}"
-  failed_when: false
-
+  failed_when: False
