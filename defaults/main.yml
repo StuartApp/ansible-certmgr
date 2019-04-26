@@ -16,7 +16,8 @@ certmgr_metrics_port: "8080"
 certmgr_user: root
 certmgr_group: root
 
-certmgr_service_enabled: false
+certmgr_service_enabled: no
+certmgr_service_state: started
 
 certmgr_cert_defs: []
 

@@ -37,7 +37,7 @@
   systemd: daemon_reload=yes
 
 - name: Enable systemd unit
-  systemd:
-    name: certmgr
+  service:
     enabled: "{{ certmgr_service_enabled }}"
-    masked: no
+    state: "{{ certmgr_service_state }}"
+    name: certmgr
