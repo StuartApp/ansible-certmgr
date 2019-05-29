@@ -30,6 +30,21 @@
   with_items: "{{ certmgr_cert_defs }}"
   notify: restart certmgr
 
+- block:
+    - name: Create certificate groups
+      group:
+        name: "{{ item.private_key_group }}"
+      when: item.private_key_group is defined
+      loop: "{{ certmgr_cert_defs }}"
+
+    - name: Create certificate users
+      user:
+        name: "{{ item.private_key_owner }}"
+        groups: "{{ item.private_key_group }}"
+      when: item.private_key_owner is defined
+      loop: "{{ certmgr_cert_defs }}"
+  when: certmgr_manage_users_and_groups
+
 - name: Download CA certificate from every remote configured
   shell: curl -X POST -d '{"label":"","profile":"{{ item.authority_profile }}"}' -sk \
          {{ item.authority_remote }}/api/v1/cfssl/info | cfssljson {{ item.name }}
@@ -39,7 +54,7 @@
   become_user: "{{ certmgr_user }}"
   with_items: "{{ certmgr_cert_defs }}"
   notify: restart certmgr
-  when: item.authority_remote | search('https://')
+  when: item.authority_remote is search('https://')
   failed_when: False
 
 - name: CertMgr first run

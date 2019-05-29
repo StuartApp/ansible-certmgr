@@ -22,7 +22,7 @@
 
 - name: Install new version
   command: mv "/tmp/certmgr-{{ certmgr_os }}-{{ certmgr_arch }}-v{{ certmgr_version }}" /usr/local/bin/certmgr
-  when: not (download_certmgr | skipped)
+  when: not (download_certmgr is skipped)
 
 - name: Install systemd unit
   template:
