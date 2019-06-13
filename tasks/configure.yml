@@ -45,6 +45,19 @@
       loop: "{{ certmgr_cert_defs }}"
   when: certmgr_manage_users_and_groups
 
+- block:
+    - name: Extract certificates paths
+      set_fact: certmgr_certs_paths="{{ item.0[item.1] | dirname }}"
+      loop: "{{ certmgr_cert_defs | product(['private_key_path', 'certificate_path', 'authority_path']) | list }}"
+      register: certmgr_certs_paths_results
+
+    - name: Create certificates directories
+      file:
+        path: "{{ item }}"
+        state: directory
+      loop: "{{ certmgr_certs_paths_results.results | map(attribute='ansible_facts.certmgr_certs_paths') | list | unique }}"
+  when: certmgr_manage_cert_dirs
+
 - name: Download CA certificate from every remote configured
   shell: curl -X POST -d '{"label":"","profile":"{{ item.authority_profile }}"}' -sk \
          {{ item.authority_remote }}/api/v1/cfssl/info | cfssljson {{ item.name }}

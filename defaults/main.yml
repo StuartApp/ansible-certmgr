@@ -22,6 +22,7 @@ certmgr_service_state: started
 certmgr_cert_defs: []
 
 certmgr_manage_users_and_groups: false
+certmgr_manage_cert_dirs: false
 #############################
 # certmgr_cert_defs example #
 #############################
