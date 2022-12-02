@@ -60,7 +60,7 @@
 
 - name: Download CA certificate from every remote configured
   shell: curl -X POST -d '{"label":"","profile":"{{ item.authority_profile }}"}' -sk \
-         {{ item.authority_remote }}/api/v1/cfssl/info | cfssljson {{ item.name }}
+         {{ item.authority_remote }}/api/v1/cfssl/info | jq -r '.result.certificate' >  {{ item.name }}.pem
   args:
     chdir: /etc/ssl/certs/
   become: true
