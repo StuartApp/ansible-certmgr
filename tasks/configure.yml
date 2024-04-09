@@ -70,6 +70,13 @@
   when: item.authority_remote is search('https://')
   failed_when: False
 
+- name: CertMgr clean certificates
+  command: certmgr clean
+  become: true
+  become_user: "{{ certmgr_user }}"
+  failed_when: False
+  when: certmgr_clean | bool
+
 - name: CertMgr first run
   command: certmgr ensure
   become: true
